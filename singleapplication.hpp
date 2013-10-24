@@ -1,4 +1,3 @@
-
 #ifndef _singleapplication_hpp
 #define _singleapplication_hpp
 
@@ -49,7 +48,9 @@ struct single_application: private boost::noncopyable {
 				,boost::interprocess::read_only
 			);
 			boost::interprocess::mapped_region region(shared_obj, boost::interprocess::read_only);
-			maybe_run = ((new(region.get_address())timer_data)->posix_time+(sleep_time_sec*2) < (boost::uint32_t)std::time(0));
+			timer_data *timer = ((new(region.get_address())timer_data);
+			std::assert(timer);
+			maybe_run = timer->posix_time+(sleep_time_sec*2) < (boost::uint32_t)std::time(0));
 			if ( !maybe_run ) {
 				throw std::runtime_error("application already running");
 			} else {
