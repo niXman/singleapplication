@@ -1,4 +1,3 @@
-
 #include <singleapplication.hpp>
 
 #include <iostream>
@@ -20,7 +19,9 @@ int main(int argc, char** argv) {
 		retcode = app.exec();
 	} catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
+		retcode = 1;
 	}
+
 	return retcode;
 }
 
