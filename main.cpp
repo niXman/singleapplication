@@ -17,8 +17,8 @@ int main(int argc, char** argv) {
 	try {
 		single_application app(argc, argv, main2);
 		retcode = app.exec();
-	} catch (const std::exception& e) {
-		std::cout << e.what() << std::endl;
+	} catch (const std::exception& ex) {
+		std::cout << "[exception] \"" << ex.what() << "\"" << std::endl;
 		retcode = 1;
 	}
 
