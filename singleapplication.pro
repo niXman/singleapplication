@@ -8,7 +8,8 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += \
-	main.cpp
+	main.cpp \
+    singleapplication.cpp
 
 LIBS += \
 	-lpthread \
