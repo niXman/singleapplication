@@ -39,6 +39,8 @@
 
 #include <boost/noncopyable.hpp>
 
+namespace single_application {
+
 /***************************************************************************/
 
 struct single_application: private boost::noncopyable {
@@ -47,6 +49,7 @@ struct single_application: private boost::noncopyable {
 	single_application(main_function_ptr main, int argc, char **argv);
 	~single_application();
 
+	bool already_running() const;
 	int exec() const;
 
 private:
@@ -55,5 +58,7 @@ private:
 };
 
 /***************************************************************************/
+
+} // ns single_application
 
 #endif // __singleapplication_hpp__included

@@ -45,6 +45,8 @@
 
 /**************************************************************************/
 
+namespace single_application {
+
 namespace bi = boost::interprocess;
 
 struct single_application::impl {
@@ -153,3 +155,5 @@ single_application::~single_application()
 int single_application::exec() const { return pimpl->exec(); }
 
 /**************************************************************************/
+
+} // ns single_application
