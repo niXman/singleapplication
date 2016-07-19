@@ -73,11 +73,10 @@ struct single_application::impl {
 		try {
 			bi::named_mutex m(bi::open_only, named_mutex_name.c_str());
 			already_running = true;
-		} catch (const bi::interprocess_exception &) {
-			can_run = true;
-		}
+		} catch (const bi::interprocess_exception &) {}
 
 		if ( !already_running ) {
+			can_run = true;
 			timer_thread = boost::thread(&impl::thread_func, this);
 		} else {
 			bi::named_mutex mutex(bi::open_only, named_mutex_name.c_str());
@@ -88,17 +87,14 @@ struct single_application::impl {
 			assert(timer);
 
 			can_run = timer->posix_time+(impl::sleep_time_sec*2) < static_cast<boost::uint32_t>(std::time(0));
-			if ( !can_run ) {
-				throw std::runtime_error("application already running");
-			} else {
+			if ( can_run ) {
 				bi::named_mutex::remove(named_mutex_name.c_str());
 				bi::shared_memory_object::remove(shared_object_name.c_str());
 				timer_thread = boost::thread(&impl::thread_func, this);
 			}
 		}
 	}
-	~impl()
-	{
+	~impl() {
 		thread_is_running = false;
 		timer_thread.join();
 		if ( can_run ) {
@@ -107,6 +103,10 @@ struct single_application::impl {
 		}
 	}
 
+	bool already_running() const { return !can_run; }
+	int exec() const { return (can_run) ? main_function(argc, argv) : EXIT_FAILURE; }
+
+private:
 	static void thread_func(const void *data) {
 		const single_application::impl *app = static_cast<const single_application::impl*>(data);
 
@@ -115,15 +115,12 @@ struct single_application::impl {
 		shared_obj.truncate(sizeof(timer_data));
 		bi::mapped_region region(shared_obj, bi::read_write);
 		while ( app->thread_is_running ) {
-			{  bi::scoped_lock<bi::named_mutex> lock(mutex);
+			{
+				bi::scoped_lock<bi::named_mutex> lock(mutex);
 				(new(region.get_address())timer_data)->posix_time = static_cast<boost::uint32_t>(std::time(0));
 			}
 			boost::this_thread::sleep(boost::posix_time::seconds(sleep_time_sec));
 		}
-	}
-
-	int exec() const {
-		return (can_run) ? main_function(argc, argv) : EXIT_FAILURE;
 	}
 
 	enum { sleep_time_sec = 1 };
@@ -151,6 +148,8 @@ single_application::single_application(single_application::main_function_ptr mai
 
 single_application::~single_application()
 { delete pimpl; }
+
+bool single_application::already_running() const { return pimpl->already_running(); }
 
 int single_application::exec() const { return pimpl->exec(); }
 
