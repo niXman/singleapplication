@@ -1,21 +1,24 @@
 
 QT       -= core gui
-
 TARGET   = singleapplication
 CONFIG   += console
 CONFIG   -= app_bundle
 
-TEMPLATE = app
+TEMPLATE = \
+    app
+
+INCLUDEPATH += \
+    include
 
 SOURCES += \
-	main.cpp \
-    singleapplication.cpp
-
-LIBS += \
-	-lpthread \
-	-lrt \
-	-lboost_system \
-	-lboost_thread
+    main.cpp \
+    src/singleapplication.cpp
 
 HEADERS += \
-    singleapplication.hpp
+    include/singleapplication/singleapplication.hpp
+
+LIBS += \
+    -lpthread \
+    -lrt \
+    -lboost_system \
+    -lboost_thread

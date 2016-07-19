@@ -1,5 +1,5 @@
 
-#include <singleapplication.hpp>
+#include <singleapplication/singleapplication.hpp>
 
 #include <iostream>
 
